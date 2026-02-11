@@ -1,80 +1,71 @@
-URL Shortener Service
+URL Shortener — Docker Quickstart
 
-A minimal URL shortener implemented with FastAPI. Features:
-- REST API to shorten URLs and redirect to originals
-- In-memory storage for mappings
-- Basic URL validation
-- Structured logging to stdout
-- /health endpoint
-- Tests with pytest
-- Dockerfile for containerization
+A compact, decoupled URL shortener with a beautiful frontend and a simple backend. This repository contains two services: a frontend (static UI) and a backend (API). Run them with Docker for a fast local demo.
 
-Quickstart (local)
+Quick notes
+- Frontend serves the UI (default port 8080) and talks to the backend via an env var BACKEND_URL.
+- Backend serves the API (default port 8000).
+- We recommend running both containers on a user-defined Docker network so the frontend can call the backend by name.
 
-1. Clone the repository
+1) Build images (optional)
+If you have the source locally, build images named url-shortener-backend and url-shortener-frontend:
 
-2. Create a virtual environment and install dependencies
+docker build -t url-shortener-backend ./backend
+docker build -t url-shortener-frontend ./frontend
 
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+2) Run with a dedicated Docker network (recommended)
+Create a network so containers can talk by name:
 
-3. Run the app (development)
+docker network create url-net
 
-# from project root
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --log-config log_config.yml
+Run the backend (exposes port 8000 on the host):
 
-4. Endpoints
+docker run -d --name url-backend --network url-net -p 8000:8000 \
+  -e PORT=8000 \
+  url-shortener-backend:latest
 
-POST /shorten
-- Request JSON: {"url": "https://example.com/path"}
-- Response: {"short_id": "abc123", "short_url": "http://localhost:8000/abc123"}
-- Validates scheme (http/https) and basic form
+Run the frontend (serves UI on host port 8080). The container will use the backend by its container name via BACKEND_URL:
 
-GET /{short_id}
-- Redirects (307) to the original URL if found
-- Returns 404 if not found
+docker run -d --name url-frontend --network url-net -p 8080:80 \
+  -e BACKEND_URL=http://url-backend:8000 \
+  url-shortener-frontend:latest
 
-GET /health
-- Returns 200 JSON {"status": "ok"}
+Open the UI: http://localhost:8080
 
-Examples
+3) Alternative: Host mapping (no custom network)
+If you prefer not to create a Docker network, run the backend and tell the frontend to call the host address. On macOS/Windows use host.docker.internal:
 
-Shorten a URL
+docker run -d --name url-backend -p 8000:8000 url-shortener-backend:latest
 
-curl -s -X POST -H "Content-Type: application/json" \
-  -d '{"url":"https://www.example.com"}' \
-  http://localhost:8000/shorten | jq
+docker run -d --name url-frontend -p 8080:80 -e BACKEND_URL=http://host.docker.internal:8000 url-shortener-frontend:latest
 
-Follow redirect
+On Linux, replace host.docker.internal with your host gateway (e.g. http://172.17.0.1:8000) or use the recommended user-defined network above.
 
-curl -v http://localhost:8000/<short_id>
+4) Stop & cleanup
 
-Run tests
+docker stop url-frontend url-backend && docker rm url-frontend url-backend
+docker network rm url-net  # if you created it
 
-pytest -q
+5) Environment variables
+- Backend
+  - PORT (default 8000)
+- Frontend
+  - BACKEND_URL (full URL to backend, e.g. http://url-backend:8000)
 
-Docker
+6) Quick test (example)
+If your backend exposes a JSON POST endpoint /api/shorten that accepts {"url":"..."}, you can test with:
 
-Build
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com"}' \
+  http://localhost:8000/api/shorten
 
-docker build -t url-shortener:latest .
+Adjust the endpoint path to match your backend implementation.
 
-Run
+Need help?
+If something doesn't start, check container logs:
 
-docker run -p 8000:8000 --env PORT=8000 url-shortener:latest
+docker logs url-backend
 
-Configuration
+docker logs url-frontend
 
-- PORT: port to listen on (default 8000)
-- BASE_URL: base host used when returning short_url (default http://localhost:8000)
-
-Notes
-
-- Storage is in-memory and ephemeral; for production replace with persistent store (Redis, PostgreSQL).
-- Short IDs are compact and checked for collisions.
-- Logging is structured (JSON) and goes to stdout for easy collection by log aggregators.
-
-Contact
-
-For details or improvements, see IMPLEMENTATION_PLAN.md for design choices and extension ideas.
+Enjoy the pretty, decoupled URL shortener!
