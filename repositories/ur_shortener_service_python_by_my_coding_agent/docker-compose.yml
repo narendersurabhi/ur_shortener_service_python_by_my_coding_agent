@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    image: ur_shortener_backend:latest
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: sqlite:///data/db.sqlite3
+    volumes:
+      - ./backend/data:/app/data
+    networks:
+      - urnet
+  frontend:
+    build: ./frontend
+    image: ur_shortener_frontend:latest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - urnet
+networks:
+  urnet:
+    driver: bridge
