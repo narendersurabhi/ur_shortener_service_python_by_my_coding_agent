@@ -1,9 +1,11 @@
 # IMPLEMENTATION_PLAN
 
-Goal: Improve the repository README.md to be clearer and more compact: include concise setup and installation steps, a short usage example, and contribution guidance. Keep the implementation minimal and focused on readability and developer onboarding.
+Goal: Analyze the repository and update, improve, or correct markdown files (README and any docs). Create IMPLEMENTATION_PLAN.md at the repo root and implement each step, keeping changes compact. Use workspace-relative paths for all file edits.
 
 ## Steps
-- [x] Step 1: Add contribution and conduct docs (files: CONTRIBUTING.md, CODE_OF_CONDUCT.md)
-- [x] Step 2: Rewrite README to be concise (setup, install, usage, contributing) (files: README.md)
-- [x] Step 3: Add Makefile for common setup/test/run commands (files: Makefile)
-- [x] Step 4: Add tests guide to document how to run the test suite (files: tests/README.md)
+- [x] Step 1: Add IMPLEMENTATION_PLAN (files: IMPLEMENTATION_PLAN.md)
+- [x] Step 2: Revise root README (files: README.md)
+- [x] Step 3: Add contributing and style guide (files: docs/CONTRIBUTING.md, docs/STYLE_GUIDE.md)
+- [x] Step 4: Add usage and examples (files: docs/USAGE.md, docs/EXAMPLES.md)
+- [x] Step 5: Add changelog and release notes (files: CHANGELOG.md, docs/RELEASE.md)
+- [x] Step 6: Add FAQ and troubleshooting (files: docs/FAQ.md, docs/TROUBLESHOOTING.md)
