@@ -1,32 +1,25 @@
 version: '3.8'
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    image: urlshortener-backend:local
+    build: ./backend
+    image: ur_shortener_backend:latest
     ports:
       - "8000:8000"
-    restart: unless-stopped
-    networks:
-      - appnet
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: urlshortener-frontend:local
     environment:
-      - REACT_APP_BACKEND_URL=http://backend:8000
-      - VITE_BACKEND_URL=http://backend:8000
+      DATABASE_URL: sqlite:///data/db.sqlite3
+    volumes:
+      - ./backend/data:/app/data
+    networks:
+      - urnet
+  frontend:
+    build: ./frontend
+    image: ur_shortener_frontend:latest
     ports:
       - "3000:3000"
     depends_on:
       - backend
-    restart: unless-stopped
     networks:
-      - appnet
-
+      - urnet
 networks:
-  appnet:
+  urnet:
     driver: bridge

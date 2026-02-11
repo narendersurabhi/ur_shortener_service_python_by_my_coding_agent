@@ -1,71 +1,74 @@
-URL Shortener — Docker Quickstart
+# UR Shortener Service (Python) — by my coding agent
 
-A compact, decoupled URL shortener with a beautiful frontend and a simple backend. This repository contains two services: a frontend (static UI) and a backend (API). Run them with Docker for a fast local demo.
+Small URL shortening service (backend + frontend). This README focuses on common developer tasks and includes runnable commands in fenced code blocks.
 
-Quick notes
-- Frontend serves the UI (default port 8080) and talks to the backend via an env var BACKEND_URL.
-- Backend serves the API (default port 8000).
-- We recommend running both containers on a user-defined Docker network so the frontend can call the backend by name.
+## Requirements
 
-1) Build images (optional)
-If you have the source locally, build images named url-shortener-backend and url-shortener-frontend:
+- Docker & docker-compose (for stack deployment)
+- Python 3.9+ (for local development)
+- pip / virtualenv
 
-docker build -t url-shortener-backend ./backend
-docker build -t url-shortener-frontend ./frontend
+## Quickstart (docker-compose)
 
-2) Run with a dedicated Docker network (recommended)
-Create a network so containers can talk by name:
+Start the frontend and backend as a stack:
 
-docker network create url-net
+```bash
+docker-compose -f docker-compose.yml up --build -d
+```
 
-Run the backend (exposes port 8000 on the host):
+View logs:
 
-docker run -d --name url-backend --network url-net -p 8000:8000 \
-  -e PORT=8000 \
-  url-shortener-backend:latest
+```bash
+docker-compose -f docker-compose.yml logs -f
+```
 
-Run the frontend (serves UI on host port 8080). The container will use the backend by its container name via BACKEND_URL:
+Stop and remove the stack:
 
-docker run -d --name url-frontend --network url-net -p 8080:80 \
-  -e BACKEND_URL=http://url-backend:8000 \
-  url-shortener-frontend:latest
+```bash
+docker-compose -f docker-compose.yml down
+```
 
-Open the UI: http://localhost:8080
+## Local development (backend)
 
-3) Alternative: Host mapping (no custom network)
-If you prefer not to create a Docker network, run the backend and tell the frontend to call the host address. On macOS/Windows use host.docker.internal:
+Create a virtual environment and install deps:
 
-docker run -d --name url-backend -p 8000:8000 url-shortener-backend:latest
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+```
 
-docker run -d --name url-frontend -p 8080:80 -e BACKEND_URL=http://host.docker.internal:8000 url-shortener-frontend:latest
+Run the backend (example using Flask):
 
-On Linux, replace host.docker.internal with your host gateway (e.g. http://172.17.0.1:8000) or use the recommended user-defined network above.
+```bash
+export FLASK_APP=app.py
+export FLASK_ENV=development
+flask run --host=0.0.0.0 --port=8000
+```
 
-4) Stop & cleanup
+Example request (create short URL):
 
-docker stop url-frontend url-backend && docker rm url-frontend url-backend
-docker network rm url-net  # if you created it
+```bash
+curl -s -X POST http://localhost:8000/shorten \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com"}' | jq
+```
 
-5) Environment variables
-- Backend
-  - PORT (default 8000)
-- Frontend
-  - BACKEND_URL (full URL to backend, e.g. http://url-backend:8000)
+## Tests / CI
 
-6) Quick test (example)
-If your backend exposes a JSON POST endpoint /api/shorten that accepts {"url":"..."}, you can test with:
+Run the test suite locally with pytest:
 
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"url":"https://example.com"}' \
-  http://localhost:8000/api/shorten
+```bash
+pytest -q
+```
 
-Adjust the endpoint path to match your backend implementation.
+The repository includes a GitHub Actions workflow to run these tests on push and pull requests (see .github/workflows). The workflow invokes the same pytest command above.
 
-Need help?
-If something doesn't start, check container logs:
+## Contributing
 
-docker logs url-backend
+- Open an issue or a PR
+- Keep changes small and add/maintain tests
 
-docker logs url-frontend
+## Notes
 
-Enjoy the pretty, decoupled URL shortener!
+This README was updated to include fenced command and code blocks for clarity during development and CI. For deployment and CI specifics, inspect the repository's docker-compose.yml and .github/workflows/*.yml files.
