@@ -1,11 +1,12 @@
 # IMPLEMENTATION_PLAN
 
-Goal: Create IMPLEMENTATION_PLAN.md and implement a compact, beautiful UI (no login required) decoupled from the backend for the URL shortener. Update README with clear, attractive Docker run instructions for front and back. Keep implementation compact.
+Goal: Create IMPLEMENTATION_PLAN.md and implement each step for repositories/ur_shortener_service_python_by_my_coding_agent: include a compact docker-compose file to deploy frontend and backend as a stack, add a GitHub Actions CI workflow that runs the repository tests, and improve README.md to include code fences where commands or code snippets are required. Keep the implementation compact. Follow any provided constraints.
 
 ## Steps
-- [x] Step 1: Add implementation plan (files: IMPLEMENTATION_PLAN.md)
-- [x] Step 2: Create compact static frontend UI (decoupled from backend) (files: frontend/index.html.template, frontend/app.js, frontend/styles.css)
-- [x] Step 3: Add frontend Docker image and runtime entrypoint (inject BACKEND_URL at container start) (files: frontend/Dockerfile, frontend/entrypoint.sh, frontend/nginx.conf, frontend/.dockerignore)
-- [x] Step 4: Add docker-compose for easy local run of front + existing backend (files: docker-compose.yml)
-- [x] Step 5: Update repository README with clear, attractive Docker run instructions for front and back (files: README.md)
-- [x] Step 6: Add a minimal smoke test script for the frontend (files: tests/smoke_frontend.sh)
+- [x] Step 1: Create implementation plan (files: repositories/ur_shortener_service_python_by_my_coding_agent/IMPLEMENTATION_PLAN.md)
+- [x] Step 2: Add compact docker-compose stack (files: repositories/ur_shortener_service_python_by_my_coding_agent/docker-compose.yml)
+- [x] Step 3: Add backend Dockerfile (files: repositories/ur_shortener_service_python_by_my_coding_agent/backend/Dockerfile)
+- [x] Step 4: Add frontend Dockerfile (files: repositories/ur_shortener_service_python_by_my_coding_agent/frontend/Dockerfile)
+- [x] Step 5: Add GitHub Actions CI workflow (files: repositories/ur_shortener_service_python_by_my_coding_agent/.github/workflows/ci.yml)
+- [x] Step 6: Improve README with fenced code blocks (files: repositories/ur_shortener_service_python_by_my_coding_agent/README.md)
+- [x] Step 7: Add minimal placeholder tests (files: repositories/ur_shortener_service_python_by_my_coding_agent/tests/test_placeholder.py)
